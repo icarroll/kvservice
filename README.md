@@ -4,7 +4,7 @@ RESTful API for simple key-value store
 Runs under Python 2.7
 
 ```shell
-pip -r requirements.txt
+pip install -r requirements.txt
 python test_kvservice.py
 python kvservice.py
 ```
