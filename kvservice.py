@@ -75,6 +75,9 @@ def haskey(key):
         rv = cur.fetchone()
         cur.close()
 
+        if not rv:
+            return "", status.HTTP_204_NO_CONTENT
+
         return {"value": rv["value"]}
 
     elif request.method == "POST":
@@ -107,4 +110,4 @@ def haskey(key):
         return "", status.HTTP_204_NO_CONTENT
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="127.0.0.1", port=5000, debug=True)
