@@ -1,9 +1,19 @@
-from flask import request, g
+from flask import Flask, request, g, render_template
 from flask_api import FlaskAPI, status
 import sqlite3
-import dbm.dumb as dbm
 
-app = FlaskAPI(__name__)
+class CustomFlask(FlaskAPI):
+    jinja_options = Flask.jinja_options.copy()
+    jinja_options.update(dict(
+        block_start_string="$(",
+        block_end_string=")",
+        variable_start_string="${",
+        variable_end_string="}",
+        comment_start_string="/*",
+        comment_end_string="*/",
+    ))
+
+app = CustomFlask(__name__)
 
 CREATE_QUERY = '''
 CREATE TABLE kv (
@@ -32,6 +42,10 @@ def close_connection(exception):
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()
+
+@app.route("/")
+def home():
+    return render_template("home.html")
 
 @app.route("/key/", methods=["GET", "PUT"])
 def nokey():
@@ -91,3 +105,6 @@ def haskey(key):
         db.commit()
 
         return "", status.HTTP_204_NO_CONTENT
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

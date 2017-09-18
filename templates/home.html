@@ -1,0 +1,54 @@
+<script src="https://unpkg.com/vue"></script>
+
+<H1>Stor-House</H1>
+
+<div id="vmodel">
+
+  <dl>
+    <span v-for="(value,key) in kvobj">
+      <dt><input type="button" style="height: 20px; width: 20px; background: url('static/delete-xxl.png'); background-size: 16px 16px;" v-on:click="remove(key)"/> {{key}}</dt>
+      <dd><input v-model="value"/> <input type="button" value="update" v-on:click="update(key, value)"/></dd>
+    </span>
+    <div style="margin-top: 10px">
+      <hr style="margin-right: 100%; border-top: 1px solid grey; width: 100px;"/>
+      <dt><input v-model="newkey" placeholder="New key"/></dt>
+      <dd><input v-model="newvalue" placeholder="New value"/> <input type="button" value="add" v-on:click="create(newkey, newvalue)"/></dd>
+    </div>
+  </dl>
+</div>
+
+<script>
+var model = new Vue({
+    el: "#vmodel",
+    data: {
+      kvobj: {},
+      newkey: "",
+      newvalue: "",
+    },
+    methods: {
+      remove: function (key) {
+        fetch("key/"+key, {method: "delete"}).then(function (response) {
+          location.reload(true);
+        });
+      },
+      update: function (key, value) {
+        fetch("key/"+key, {headers: {'Content-Type': 'application/json'}, method: "post", body: JSON.stringify({value: value})}).then(function (response) {
+          location.reload(true);
+        });
+      },
+      create: function (key, value) {
+        fetch("key/"+key, {headers: {'Content-Type': 'application/json'}, method: "put", body: JSON.stringify({value: value})}).then(function (response) {
+          location.reload(true);
+        });
+      },
+    },
+})
+
+fetch("key/").then(function (response) {
+  return response.json()
+}).then(function (j) {
+  model.kvobj = j;
+});
+</script>
+
+<!-- vi: set sw=2: -->
